@@ -160,6 +160,12 @@ For each mixture, C_λ = (Eᵀ C_p⁻¹ E)⁻¹, where C_p is the variance of th
 
 ---
 
+## Acknowledgements
+
+`make_prn.py` is a Python translation of the R script written by **Sebastián Dietrich** (Instituto de Hidrología de Llanuras "Dr. Eduardo J. Usunoff", IHLLA–CONICET) to build MIX input files. We are grateful for his original implementation, on which this workflow is based.
+
+---
+
 ## References
 
 - Carrera J., Vázquez-Suñé E., Castillo O., Sánchez-Vila X. (2004). A methodology to compute mixing ratios with uncertain end-members. *Water Resources Research*, 40, W12101. https://doi.org/10.1029/2003WR002263

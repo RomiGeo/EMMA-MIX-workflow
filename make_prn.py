@@ -3,9 +3,10 @@
 make_prn.py — Build the input file (.prn) for MIX / EMMA-MIX (Carrera et al., 2004)
 from a CSV table of concentrations.
 
-Python translation of prn-gen_Seba.R. The layout follows the MIX Guide Notes
-(Vázquez-Suñé and Carrera) and reproduces, field by field, the .prn written by
-the R script, which MIX reads without errors.
+Python translation of the R script written by Sebastián Dietrich (IHLLA-CONICET)
+to build MIX input files. The layout follows the MIX Guide Notes (Vázquez-Suñé
+and Carrera) and reproduces, field by field, the .prn written by the R script,
+which MIX reads without errors.
 
 Input CSV
 ---------
