@@ -156,9 +156,9 @@ python mix_uncertainty.py data.res --out sigma.csv
 ### Reading the output
 
 ```
-Mixture                       EM1                  EM2                  EM3                  EM4    cond
+Mixture                       P29             Rainfall                  P38                   UZ    cond
 --------------------------------------------------------------------------------------------------------
-Sample1             0.000 ± 0.015        0.589 ± 0.104        0.000 ± 0.042        0.411 ± 0.079    10.5
+S18122023           0.000 ± 0.015        0.589 ± 0.104        0.000 ± 0.042        0.411 ± 0.079    10.5
 ```
 
 - **0.589 ± 0.104**: mixing ratio and its ±kσ interval.
