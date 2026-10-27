@@ -2,7 +2,12 @@
 """
 mix_uncertainty.py — First-order uncertainty of mixing ratios computed with MIX.
 
-For each mixture p:
+Authors: Jesús Carrera, Romina Marcovecchio, Sebastián Dietrich.
+Python implementation, by R. Marcovecchio, of the uncertainty formulation of
+J. Carrera.
+
+For each mixture p, with E the matrix of end-member concentrations
+(species x end-members) and c_p the measured concentrations of the mixture:
 
     C_p      = sum_e lambda_pe^2 * C_ms,e + C_ms,p          (1)
     lambda_p = argmin (c_p - E lambda_p)^T C_p^-1 (c_p - E lambda_p)   (2)
@@ -10,8 +15,8 @@ For each mixture p:
 
 End-members (EMs) are treated as fixed (their identity is known) but uncertain
 (their concentrations have errors). Input variances are rescaled by a
-species-specific factor f_s (Carrera and Neuman 1986, Eq. 6), computed so that
-the mean squared normalised residual of each species equals 1.
+species-specific factor f_s, computed so that the mean squared normalised
+residual of each species equals 1.
 
 The script reads the MIX output file (.res) directly and, for every mixture,
 reports the mixing ratios, their standard deviations, the +/- k*sigma interval
@@ -43,8 +48,7 @@ Limitations
   those samples if exact treatment is required.
 * First-order (linearised) approximation evaluated at the MIX solution.
   The prior variances of the EMs are included (C_p), but not the posterior
-  uncertainty of the EM compositions estimated by MIX, nor conceptual
-  (model-structure) uncertainty.
+  uncertainty of the EM compositions estimated by MIX.
 * The sum-to-one and non-negativity constraints are not imposed in the
   covariance; intervals are conservative and clipped to [0, 1].
 """
@@ -157,7 +161,7 @@ def parse_res(path):
 # Uncertainty (Eqs. 1-3)
 # --------------------------------------------------------------------------
 def scaling_factors(d, fixed_em):
-    """f_s: mean squared normalised residual per species (Carrera & Neuman 1986)."""
+    """f_s: mean squared normalised residual per species."""
     if fixed_em:
         E, lam = d["E_in"], d["lam_ini"]
         r2 = (d["C"] - lam @ E) ** 2 / d["V_w"]
@@ -177,7 +181,7 @@ def uncertainty(d, fixed_em=False):
     for p in range(len(d["wells"])):
         cp = fs * d["V_w"][p] + (lam[p] ** 2) @ (fs * d["V_em"])     # Eq. (1), diagonal
         A = E / np.sqrt(cp)                                          # weighted E (ne x ns)
-        M = A @ A.T                                                  # E C_p^-1 E^T
+        M = A @ A.T                                                  # E^T C_p^-1 E (E stored as EMs x species)
         cov = np.linalg.inv(M)                                       # Eq. (3)
         sig = np.sqrt(np.diag(cov))
         corr = cov / np.outer(sig, sig)

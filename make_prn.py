@@ -3,15 +3,17 @@
 make_prn.py — Build the input file (.prn) for MIX / EMMA-MIX (Carrera et al., 2004)
 from a CSV table of concentrations.
 
-Python translation of the R script written by Sebastián Dietrich (IHLLA-CONICET)
-to build MIX input files. The layout follows the MIX Guide Notes (Vázquez-Suñé
-and Carrera) and reproduces, field by field, the .prn written by the R script,
-which MIX reads without errors.
+Authors: Jesús Carrera, Romina Marcovecchio, Sebastián Dietrich.
+Python translation and extension, by R. Marcovecchio, of the R script written by
+S. Dietrich (IHLLA-CONICET) to build MIX input files. The layout follows the
+MIX Guide Notes (Vázquez-Suñé and Carrera) and reproduces, field by field, the
+.prn written by the R script, which MIX reads without errors.
 
 Input CSV
 ---------
-* One row per water. End-members can be in any rows: the script asks which
-  ones they are (or use --em / --sources) and writes them first, as MIX requires.
+* One row per water: end-members first, then mixtures. MIX keeps this order,
+  so the rows of the CSV, the .prn and the .res match. The script asks which
+  rows are end-members (or use --sources / --em).
 * One column per species, in the order MIX will use them; the LAST column is
   the water name (no spaces; keep it short, <= 10 characters recommended).
 * Header row with species names. Names starting with a digit (e.g. "2H") are
@@ -165,20 +167,21 @@ def build_prn(species, X, names, n_sour, attempts=9, iflag=0, nseed=18201,
     out += [row_line(X[i], names[i]) for i in range(n_tot)]
     out.append("Covariances ")
     out += [row_line(V[i], names[i]) for i in range(n_tot)]
-    out.append(f"{len(constraints)} ")
-    out += [f"{w:5d}{s:5d}{p:8.4f}" for w, s, p in constraints]
+    # as the R script: "0 " with no constraints; right-aligned count otherwise
+    out.append(str(len(constraints)).rjust(WIDTH) if constraints else "0 ")
+    out += [row_line((w, s, p)) + " " for w, s, p in constraints]
     out += [row_line(lam0[i]) for i in range(n_well)]
     return NEWLINE.join(out) + NEWLINE
 
 
 # --------------------------------------------------------------------------
-# Interactive questions (used when --sources is not given)
+# Interactive questions (used when neither --sources nor --em is given)
 # --------------------------------------------------------------------------
 def ask(prompt):
     try:
         return input(prompt).strip()
     except EOFError:
-        raise SystemExit("\nERROR: no answer received; use --sources N to run non-interactively.")
+        raise SystemExit("\nERROR: no answer received; use --sources N or --em LIST to run non-interactively.")
 
 
 def parse_selection(txt, n):
@@ -235,11 +238,11 @@ def ask_constraints(names, k):
     wells, sources = names[k:], names[:k]
     print("\nOptional: fix the proportion of an end-member in a mixture "
           "(e.g. rainwater = 0 in a baseflow sample).")
-    print("  Mixtures:     " + "  ".join(f"{i}={w}" for i, w in enumerate(wells, 1)))
-    print("  End-members:  " + "  ".join(f"{j}={s}" for j, s in enumerate(sources, 1)))
+    print("  Wells (mixtures):     " + "  ".join(f"{i}={w}" for i, w in enumerate(wells, 1)))
+    print("  Sources (end-members): " + "  ".join(f"{j}={s}" for j, s in enumerate(sources, 1)))
     cons = []
     while True:
-        txt = ask("Constraint as mixture,end-member,proportion (e.g. 5,2,0), or Enter to finish: ")
+        txt = ask("Constraint as well,source,proportion (e.g. 5,2,0), or Enter to finish: ")
         if not txt:
             return cons
         try:
@@ -265,7 +268,7 @@ def main(argv=None):
     ap.add_argument("--em-var-factor", type=float, default=1.0,
                     help="multiply end-member variances by this factor (default 1)")
     ap.add_argument("--constraint", action="append", default=[],
-                    help="fix a proportion: well,source,proportion (1-based; repeatable)")
+                    help="fix a proportion: well,source,proportion, numbered as in MIX (1-based; repeatable)")
     ap.add_argument("--var-csv",
                     help="CSV with user-defined variances for some waters (same columns as the "
                          "data CSV; rows matched by name). Other waters keep variance = conc^2")
@@ -320,7 +323,7 @@ def main(argv=None):
                      a.em_var_factor, cons, a.init, np.random.default_rng(a.rng_seed), var_override)
 
     out = a.out or re.sub(r"\.[^.]*$", "", a.csv) + ".prn"
-    with open(out, "w", encoding="latin-1", newline="") as fh:
+    with open(out, "w", encoding="utf-8", newline="") as fh:
         fh.write(text)
 
     print(f"Written {out}")

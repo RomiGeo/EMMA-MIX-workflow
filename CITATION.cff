@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "EMMA-MIX workflow: from a CSV table to EMMA-MIX mixing ratios and their uncertainty"
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/RomiGeo/EMMA-MIX-workflow"
+abstract: >-
+  Python scripts to build the input file (.prn) of the EMMA-MIX (MIX) program
+  from a CSV table of concentrations, and to compute the first-order
+  uncertainty of the mixing ratios from the MIX output (.res).
+keywords:
+  - end-member mixing analysis
+  - EMMA
+  - MIX
+  - mixing ratios
+  - uncertainty
+  - hydrograph separation
+  - hydrochemistry
+authors:
+  - family-names: Carrera
+    given-names: Jesús
+    affiliation: "Grup d'Hidrologia Subterrània (GHS), Institute of Environmental Assessment and Water Research (IDAEA), Consejo Superior de Investigaciones Científicas (CSIC), Barcelona, Spain"
+    orcid: "https://orcid.org/0000-0002-8054-4352"
+  - family-names: Marcovecchio
+    given-names: Romina
+    affiliation: "Instituto de Hidrología de Llanuras \"Dr. Eduardo J. Usunoff\" (IHLLA), Azul, Buenos Aires, Argentina; Universidad Nacional del Centro de la Provincia de Buenos Aires (UNCPBA), Tandil, Argentina"
+    orcid: "https://orcid.org/0000-0001-7470-9117"
+  - family-names: Dietrich
+    given-names: Sebastián
+    affiliation: "Instituto de Hidrología de Llanuras \"Dr. Eduardo J. Usunoff\" (IHLLA), Azul, Buenos Aires, Argentina; Consejo Nacional de Investigaciones Científicas y Técnicas (CONICET), Argentina; Universidad Nacional del Centro de la Provincia de Buenos Aires (UNCPBA), Tandil, Argentina"
+    orcid: "https://orcid.org/0000-0001-7937-4061"
+references:
+  - type: article
+    title: "A methodology to compute mixing ratios with uncertain end-members"
+    authors:
+      - family-names: Carrera
+        given-names: J.
+      - family-names: Vázquez-Suñé
+        given-names: E.
+      - family-names: Castillo
+        given-names: O.
+      - family-names: Sánchez-Vila
+        given-names: X.
+    journal: "Water Resources Research"
+    volume: 40
+    issue: 12
+    start: W12101
+    year: 2004
+    doi: "10.1029/2003WR002263"
